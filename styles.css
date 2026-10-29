@@ -143,3 +143,25 @@ h1 em{font-style:normal;color:var(--gold)}
 @media(max-width:480px){.topbar{padding:0 12px}.brand-mark{width:35px;height:35px}.brand-text{font-size:11px}.brand-text small{font-size:6px}.connection{max-width:122px;overflow:hidden;text-overflow:ellipsis}.page-shell,.footer{width:calc(100% - 22px)}.intro{padding-top:31px}.eyebrow{font-size:8px;letter-spacing:.11em}h1{font-size:39px}.intro-text{font-size:11px}.trust-line{font-size:9px}.input-panel,.status-panel{padding:16px 13px}.panel-heading h2{font-size:17px}#aiPrompt{font-size:11px;min-height:120px}.parameter-grid{gap:9px}.parameter-grid label{font-size:8px}.parameter-grid input,.parameter-grid select{height:37px;font-size:11px;padding:0 8px}.advanced-head{margin-top:20px}.result-summary{flex-direction:column}.metrics-grid{gap:8px}.metric-card{min-height:95px;padding:11px}.metric-card strong{font-size:18px}.drawing-panel{padding:10px}.drawing-actions .secondary-button{flex:1;white-space:normal}.svg-wrap{min-height:170px}.details-grid{grid-template-columns:1fr}.detail-card{padding:13px}.workflow-note{padding:13px}.footer>span{margin-left:0}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media print{body,html{background:#fff!important;color:#111!important;color-scheme:light}.topbar,.intro,.input-panel,.workflow-note,.footer,.drawing-actions,.editInputsBtn{display:none!important}.page-shell{width:100%;margin:0}.workspace{display:block}.status-panel{box-shadow:none;border:0;background:#fff;padding:0}.panel-heading{display:none}#resultState{display:block!important}.result-summary p,.metric-card strong,.detail-card-heading h3,.material-table td,.assumptions p,.recommendations{color:#111!important}.metrics-grid{grid-template-columns:repeat(4,1fr)}.metric-card,.drawing-panel,.detail-card,.assumptions{background:#fff!important;border:1px solid #aaa!important;break-inside:avoid}.metric-card small,.metric-card>span,.overline,.drawing-heading p,.drawing-caption,.assumptions>strong{color:#555!important}.svg-wrap{background:#fff!important;border-color:#888!important}#planSvg{print-color-adjust:exact;-webkit-print-color-adjust:exact}.details-grid{grid-template-columns:1fr 1fr}.recommendations{gap:5px}.material-table th,.material-table td{border-color:#ccc!important}.assumptions .safety-note{color:#444!important;border-color:#ccc!important}.result-summary{border-color:#ccc!important}}
+
+/* Interactive 3D house preview */
+.house3d-panel{margin-top:17px;padding:17px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(155deg,rgba(21,34,49,.96),rgba(12,21,31,.96));box-shadow:var(--shadow);min-width:0}
+.house3d-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:13px}
+.house3d-heading h3{margin:4px 0 5px;font:600 18px/1.25 "Space Grotesk",sans-serif;letter-spacing:-.03em}
+.house3d-heading p{margin:0;color:var(--muted);font-size:11px;line-height:1.7;max-width:510px}
+.house3d-status{display:inline-flex;align-items:center;gap:7px;flex-shrink:0;padding:6px 9px;border:1px solid rgba(123,215,239,.2);border-radius:999px;color:var(--cyan);background:rgba(123,215,239,.06);font-size:9px;line-height:1.5}
+.house3d-status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor}
+.house3d-toolbar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.house3d-toolbar .secondary-button{font-size:10px;padding:8px 11px}
+.house3d-toolbar button:disabled{opacity:.38;cursor:not-allowed}
+.house3d-canvas{position:relative;width:100%;height:370px;overflow:hidden;border:1px solid #2b3e52;border-radius:10px;background:radial-gradient(ellipse at 50% 23%,#1e3143 0%,#111c2a 63%,#0c1520 100%);isolation:isolate}
+.house3d-canvas canvas{display:block;width:100%;height:100%;outline:none;cursor:grab}
+.house3d-canvas canvas:active{cursor:grabbing}
+.house3d-placeholder{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;color:var(--muted)}
+.house3d-placeholder .loader{width:23px;height:23px}
+.house3d-placeholder p{margin:0;max-width:320px;font-size:11px;line-height:1.75}
+.house3d-canvas[data-error="true"] .house3d-placeholder{color:#ffb8ad}
+.house3d-caption{margin:10px 2px 0;color:#91a4b9;font-size:10px;line-height:1.8}
+@media(max-width:760px){.house3d-panel{padding:13px}.house3d-heading{flex-direction:column;gap:8px}.house3d-heading h3{font-size:17px}.house3d-status{font-size:9px}.house3d-canvas{height:330px}.house3d-toolbar .secondary-button{flex:1;min-width:105px;white-space:normal}}
+@media(max-width:480px){.house3d-canvas{height:285px}.house3d-toolbar{gap:6px}.house3d-toolbar .secondary-button{padding:8px 7px;font-size:9px}.house3d-heading p{font-size:10px}}
+@media print{.house3d-panel{display:none!important}}
