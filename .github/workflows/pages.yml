@@ -23,6 +23,9 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Install dependencies for AI Gateway and function type checks
+        run: npm install --no-audit --no-fund
+
       - name: Check browser JavaScript syntax
         run: node --check --input-type=module < app.js
 
