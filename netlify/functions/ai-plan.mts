@@ -148,7 +148,7 @@ function parseJsonReply(reply: string): Record<string, unknown> {
   return parsed as Record<string, unknown>;
 }
 
-const getModel = () => process.env.BEKIUZ_BUILD_AI_MODEL || "gpt-5-mini";
+const getModel = () => process.env.BEKIUZ_BUILD_AI_MODEL || "gpt-4.1-mini";
 
 export default async (request: Request): Promise<Response> => {
   const origin = request.headers.get("origin");
@@ -212,8 +212,7 @@ export default async (request: Request): Promise<Response> => {
         { role: "system", content: "Sen ehtiyotkor, lo‘nda, JSON formatida javob beradigan o‘zbek uy rejalashtirish AI yordamchisisan." },
         { role: "user", content: instructions }
       ],
-      response_format: { type: "json_object" },
-      max_completion_tokens: 600
+      max_tokens: 600
     }, { timeout: 22000, maxRetries: 0 });
 
     const content = completion.choices[0]?.message?.content;
@@ -232,8 +231,16 @@ export default async (request: Request): Promise<Response> => {
       model: completion.model
     });
   } catch (error) {
-    const status = Number((error as { status?: unknown })?.status || 0);
-    const message = String((error as Error)?.message || error || "").toLowerCase();
+    const apiError = error as { status?: unknown; code?: unknown; type?: unknown; message?: unknown };
+    const status = Number(apiError?.status || 0);
+    const providerMessage = String(apiError?.message || error || "").slice(0, 320);
+    const message = providerMessage.toLowerCase();
+    console.error("BEKIUZ BUILD AI Gateway request failed", {
+      status,
+      code: String(apiError?.code || "").slice(0, 100),
+      type: String(apiError?.type || "").slice(0, 100),
+      message: providerMessage
+    });
     if (status === 429) {
       return jsonResponse(request, { ok: false, error: "Netlify AI Gateway limiti tugadi. Birozdan keyin urinib ko‘ring.", code: "AI_RATE_LIMIT" }, 429);
     }
@@ -246,7 +253,15 @@ export default async (request: Request): Promise<Response> => {
     if (error instanceof SyntaxError) {
       return jsonResponse(request, { ok: false, error: "AI chizma javobini JSON formatida bera olmadi. Yana urinib ko‘ring.", code: "AI_PARSE_ERROR" }, 502);
     }
-    return jsonResponse(request, { ok: false, error: "Netlify AI Gateway so‘rovida xatolik bo‘ldi. Netlify Functions logini tekshiring.", code: "AI_PROVIDER_ERROR" }, 502);
+    const providerCode = String(apiError?.code || apiError?.type || "AI_PROVIDER_ERROR").slice(0, 80);
+    const detail = providerMessage ? (" Sabab: " + providerMessage) : "";
+    return jsonResponse(request, {
+      ok: false,
+      error: "AI modeliga so‘rov muvaffaqiyatsiz. Kod: " + providerCode + (status ? " (HTTP " + status + ")" : "") + "." + detail,
+      code: "AI_PROVIDER_ERROR",
+      providerStatus: status || undefined,
+      providerCode
+    }, 502);
   }
 };
 
