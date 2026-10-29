@@ -1,4 +1,9 @@
-const WORKER_CHAT_URL = "https://bekiuz-ai.bekiuz282.workers.dev/api/chat";
+import OpenAI from "openai";
+
+declare const Netlify: {
+  env: { get(name: string): string | undefined };
+};
+
 const ALLOWED_ORIGINS = new Set([
   "https://bekiuz.github.io",
   "https://bekiuz-build.netlify.app",
@@ -9,6 +14,22 @@ const ALLOWED_ORIGINS = new Set([
   "https://localhost",
   "capacitor://localhost"
 ]);
+
+type Project = {
+  houseWidth: number;
+  houseLength: number;
+  slabThicknessCm: number;
+  wallHeight: number;
+  wallThicknessCm: number;
+  floors: number;
+  rooms: number;
+  doorCount: number;
+  windowCount: number;
+  roofType: "gable" | "hip" | "flat";
+  roofCover: "shifer" | "profnastil";
+};
+
+type Room = { name: string; x: number; y: number; width: number; length: number };
 
 function corsHeaders(request: Request): Record<string, string> {
   const origin = request.headers.get("origin");
@@ -39,20 +60,6 @@ function boundedNumber(value: unknown, fallback: number, min: number, max: numbe
   return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
 }
 
-type Project = {
-  houseWidth: number;
-  houseLength: number;
-  slabThicknessCm: number;
-  wallHeight: number;
-  wallThicknessCm: number;
-  floors: number;
-  rooms: number;
-  doorCount: number;
-  windowCount: number;
-  roofType: "gable" | "hip" | "flat";
-  roofCover: "shifer" | "profnastil";
-};
-
 function validateProject(value: unknown): Project {
   const input = value && typeof value === "object" ? value as Record<string, unknown> : {};
   const roofType = input.roofType === "hip" || input.roofType === "flat" ? input.roofType : "gable";
@@ -70,8 +77,6 @@ function validateProject(value: unknown): Project {
     roofCover: input.roofCover === "profnastil" ? "profnastil" : "shifer"
   };
 }
-
-type Room = { name: string; x: number; y: number; width: number; length: number };
 
 function fallbackRooms(count: number): Room[] {
   const names = ["Mehmonxona", "Oshxona", "Yotoqxona", "Yotoqxona 2", "Sanuzel", "Dahliz", "Ish xonasi", "Ombor"];
@@ -113,10 +118,7 @@ function validateRooms(value: unknown, count: number): Room[] {
   const rooms: Array<Room | null> = value.map((item: unknown) => {
     if (!item || typeof item !== "object") return null;
     const room = item as Record<string, unknown>;
-    const x = Number(room.x);
-    const y = Number(room.y);
-    const width = Number(room.width);
-    const length = Number(room.length);
+    const x = Number(room.x), y = Number(room.y), width = Number(room.width), length = Number(room.length);
     const name = typeof room.name === "string" ? room.name.trim().slice(0, 36) : "";
     if (!name || ![x, y, width, length].every(Number.isFinite)) return null;
     if (x < 0 || y < 0 || width < 0.12 || length < 0.12 || x + width > 1.001 || y + length > 1.001) return null;
@@ -126,60 +128,61 @@ function validateRooms(value: unknown, count: number): Room[] {
   const valid = rooms as Room[];
   for (let i = 0; i < valid.length; i += 1) {
     for (let j = i + 1; j < valid.length; j += 1) {
-      const a = valid[i];
-      const b = valid[j];
+      const a = valid[i], b = valid[j];
       const overlapX = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
       const overlapY = Math.min(a.y + a.length, b.y + b.length) - Math.max(a.y, b.y);
       if (overlapX > 0.025 && overlapY > 0.025) return fallbackRooms(count);
     }
   }
-  const covered = valid.reduce((total, room) => total + room.width * room.length, 0);
+  const covered = valid.reduce((sum, room) => sum + room.width * room.length, 0);
   return covered < 0.72 || covered > 1.05 ? fallbackRooms(count) : valid;
 }
 
 function parseJsonReply(reply: string): Record<string, unknown> {
-  let text = reply.trim();
-  const fence = String.fromCharCode(96).repeat(3);
-  if (text.startsWith(fence)) text = text.split("\n").slice(1).join("\n").split(fence)[0].trim();
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
+  const start = reply.indexOf("{");
+  const end = reply.lastIndexOf("}");
   if (start < 0 || end <= start) throw new Error("AI JSON formatida javob bermadi.");
-  const data: unknown = JSON.parse(text.slice(start, end + 1));
-  if (!data || typeof data !== "object") throw new Error("AI javobi noto‘g‘ri formatda.");
-  return data as Record<string, unknown>;
+  const parsed: unknown = JSON.parse(reply.slice(start, end + 1));
+  if (!parsed || typeof parsed !== "object") throw new Error("AI javobi noto‘g‘ri formatda.");
+  return parsed as Record<string, unknown>;
 }
+
+const getModel = () => Netlify.env.get("BEKIUZ_BUILD_AI_MODEL") || "gpt-5-mini";
 
 export default async (request: Request): Promise<Response> => {
   const origin = request.headers.get("origin");
   if (origin && !ALLOWED_ORIGINS.has(origin)) {
     return jsonResponse(request, { ok: false, error: "Bu manbadan so‘rov qabul qilinmaydi.", code: "ORIGIN_NOT_ALLOWED" }, 403);
   }
-
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(request) });
 
   if (request.method === "GET") {
-    try {
-      const probe = await fetch(WORKER_CHAT_URL, { method: "GET", signal: AbortSignal.timeout(8000) });
-      const ready = probe.status === 405;
-      return jsonResponse(request, {
-        ok: ready,
-        configured: ready,
-        provider: "Bekiuz AI / Cloudflare Workers AI",
-        error: ready ? undefined : "Bekiuz AI serveri hozir javob bermayapti."
-      }, ready ? 200 : 503);
-    } catch {
-      return jsonResponse(request, { ok: false, configured: false, error: "Bekiuz AI serveriga ulanib bo‘lmadi." }, 503);
-    }
+    const gatewayReady = Boolean(Netlify.env.get("OPENAI_BASE_URL") && Netlify.env.get("OPENAI_API_KEY"));
+    return jsonResponse(request, {
+      ok: gatewayReady,
+      configured: gatewayReady,
+      provider: "Netlify AI Gateway",
+      model: getModel(),
+      error: gatewayReady ? undefined : "Netlify AI Gateway hozir mavjud emas. Netlify hisobida AI Features yoqilganini va loyiha production deploy qilinganini tekshiring."
+    }, gatewayReady ? 200 : 503);
   }
 
   if (request.method !== "POST") {
     return jsonResponse(request, { ok: false, error: "Faqat POST so‘rovi qabul qilinadi.", code: "METHOD_NOT_ALLOWED" }, 405);
   }
 
+  if (!Netlify.env.get("OPENAI_BASE_URL") || !Netlify.env.get("OPENAI_API_KEY")) {
+    return jsonResponse(request, {
+      ok: false,
+      error: "Netlify AI Gateway aktiv emas. Netlify hisobida AI Features yoqilganini tekshiring.",
+      code: "AI_GATEWAY_NOT_CONFIGURED"
+    }, 503);
+  }
+
   let body: { prompt?: unknown; project?: unknown };
   try {
-    const length = Number(request.headers.get("content-length") || 0);
-    if (length > 10000) return jsonResponse(request, { ok: false, error: "So‘rov hajmi juda katta." }, 413);
+    const contentLength = Number(request.headers.get("content-length") || 0);
+    if (contentLength > 10000) return jsonResponse(request, { ok: false, error: "So‘rov hajmi juda katta." }, 413);
     body = await request.json() as { prompt?: unknown; project?: unknown };
   } catch {
     return jsonResponse(request, { ok: false, error: "So‘rov JSON formatida bo‘lishi kerak." }, 400);
@@ -190,72 +193,59 @@ export default async (request: Request): Promise<Response> => {
   if (prompt.length > 1200) return jsonResponse(request, { ok: false, error: "So‘rov 1200 belgidan oshmasligi kerak." }, 400);
 
   const project = validateProject(body.project);
-  const aiPrompt = [
-    "Sen BEKIUZ BUILD uchun o‘zbek tilida uy rejalashtirish yordamchisisan.",
-    "Faqat bitta valid JSON obyektini qaytar. Markdown va izoh qo‘shma.",
-    "JSON sxemasi: {\"summary\":\"qisqa o‘zbekcha izoh\",\"recommendations\":[\"tavsiya\"],\"rooms\":[{\"name\":\"Xona nomi\",\"x\":0,\"y\":0,\"width\":0.5,\"length\":1}]}",
-    "rooms massivida aynan " + project.rooms + " ta xona bo‘lishi kerak.",
-    "Xonalar x,y,width,length qiymatlari 0 dan 1 gacha bo‘lgan ulushlar. x,y chap yuqori burchak; width xona enining, length xona bo‘yining butun uyga nisbati.",
-    "Har xona to‘rtburchak bo‘lsin, uy chegarasidan chiqmasin. Xonalar bir-birining ustiga tushmasin va umumiy uy maydonining kamida 72 foizini qoplasin.",
-    "Foydalanuvchi kiritgan uy o‘lchamlari va qavatlar sonini o‘zgartirma. Xonalarni ehtiyojga qarab mantiqan joylashtir. Xona nomlari qisqa o‘zbekcha bo‘lsin.",
-    "Beton, g‘isht va tom materiallari serverdagi alohida arifmetik hisob bilan chiqariladi; narxlarni o‘ylab topma.",
-    "30 sm plita foydalanuvchi kiritgan qalinlik hisobidir, barcha uylar uchun xavfsiz degani emas. Fundament, armatura, ustun, to‘sin, grunt va tom konstruksiyasini muhandis tekshirishi kerakligini eslat.",
-    "LOYIHA PARAMETRLARI: " + JSON.stringify(project),
+  const instructions = [
+    "Sen BEKIUZ BUILD uy rejalashtirish yordamchisisan. Javobni o‘zbek tilida yoz.",
+    "Faqat JSON qaytar: {\"summary\":\"qisqa izoh\",\"recommendations\":[\"qisqa tavsiya\"],\"rooms\":[{\"name\":\"Mehmonxona\",\"x\":0,\"y\":0,\"width\":0.5,\"length\":1}]}",
+    "rooms massivida aynan " + project.rooms + " ta xona bo‘lsin. Xona x,y,width,length koordinatalari 0..1 oralig‘idagi ulushlardir. Xonalar to‘rtburchak bo‘lsin, uy chegarasidan chiqmasin, ustma-ust tushmasin va uy maydonining kamida 72 foizini qoplasin.",
+    "Uy eni, bo‘yi yoki qavatlar sonini o‘zgartirma. Qisqa, foydali o‘zbekcha xona nomlari ishlat. Tavsiyalar ko‘pi bilan 3 ta va qisqa bo‘lsin.",
+    "Material miqdorlari saytda alohida hisoblanadi; narx o‘ylab topma. Chizma konseptual. Fundament, armatura, ustun/to‘sin, grunt va konstruktiv xavfsizlikni muhandis tekshirishi kerakligini tavsiya qil.",
+    "PARAMETRLAR: " + JSON.stringify(project),
     "FOYDALANUVCHI TALABI: " + prompt
-  ].join("\n\n");
+  ].join("\n");
 
   try {
-    const upstream = await fetch(WORKER_CHAT_URL, {
-      method: "POST",
-      headers: { "content-type": "application/json", "accept": "application/json" },
-      body: JSON.stringify({
-        mode: "general",
-        messages: [{ role: "user", content: aiPrompt }]
-      }),
-      signal: AbortSignal.timeout(45000)
-    });
+    const client = new OpenAI();
+    const completion = await client.chat.completions.create({
+      model: getModel(),
+      messages: [
+        { role: "system", content: "Sen ehtiyotkor, lo‘nda, JSON formatida javob beradigan o‘zbek uy rejalashtirish AI yordamchisisan." },
+        { role: "user", content: instructions }
+      ],
+      response_format: { type: "json_object" },
+      max_completion_tokens: 600
+    }, { timeout: 22000, maxRetries: 0 });
 
-    let upstreamData: Record<string, unknown> = {};
-    try { upstreamData = await upstream.json() as Record<string, unknown>; } catch { /* handled below */ }
-
-    if (!upstream.ok || upstreamData.ok !== true || typeof upstreamData.reply !== "string") {
-      const status = upstream.status === 429 ? 429 : 502;
-      const message = typeof upstreamData.error === "string"
-        ? upstreamData.error
-        : "Bekiuz AI hozir javob qaytarmadi. Keyinroq qayta urinib ko‘ring.";
-      return jsonResponse(request, {
-        ok: false,
-        error: message,
-        code: typeof upstreamData.code === "string" ? upstreamData.code : "AI_UPSTREAM_ERROR"
-      }, status);
-    }
-
-    const parsed = parseJsonReply(upstreamData.reply);
+    const content = completion.choices[0]?.message?.content;
+    if (!content) throw new Error("AI bo‘sh javob qaytardi.");
+    const parsed = parseJsonReply(content);
     const summary = typeof parsed.summary === "string" && parsed.summary.trim()
       ? parsed.summary.trim().slice(0, 600)
-      : "Uy uchun boshlang‘ich konsept tayyorlandi.";
+      : "Uy uchun konseptual reja tayyorlandi.";
     const recommendations = Array.isArray(parsed.recommendations)
-      ? parsed.recommendations.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 220)).filter(Boolean).slice(0, 5)
+      ? parsed.recommendations.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 220)).filter(Boolean).slice(0, 3)
       : [];
 
     return jsonResponse(request, {
       ok: true,
-      plan: {
-        summary,
-        recommendations,
-        rooms: validateRooms(parsed.rooms, project.rooms)
-      },
-      model: typeof upstreamData.model === "string" ? upstreamData.model : "Bekiuz AI"
-    }, 200);
+      plan: { summary, recommendations, rooms: validateRooms(parsed.rooms, project.rooms) },
+      model: completion.model
+    });
   } catch (error) {
+    const status = Number((error as { status?: unknown })?.status || 0);
     const message = String((error as Error)?.message || error || "").toLowerCase();
+    if (status === 429) {
+      return jsonResponse(request, { ok: false, error: "Netlify AI Gateway limiti tugadi. Birozdan keyin urinib ko‘ring.", code: "AI_RATE_LIMIT" }, 429);
+    }
+    if (status === 401 || status === 403) {
+      return jsonResponse(request, { ok: false, error: "Netlify AI Gateway ruxsati yo‘q. Netlify hisobida AI Features yoqilganini tekshiring.", code: "AI_GATEWAY_AUTH_ERROR" }, 503);
+    }
     if (/timeout|timed out|abort/.test(message)) {
-      return jsonResponse(request, { ok: false, error: "AI javobi uzoq ketyapti. Birozdan keyin yana urinib ko‘ring.", code: "AI_TIMEOUT" }, 504);
+      return jsonResponse(request, { ok: false, error: "AI javobi vaqtida kelmadi. Qayta urinib ko‘ring.", code: "AI_TIMEOUT" }, 504);
     }
-    if (error instanceof SyntaxError || /json formatida|json format/.test(message)) {
-      return jsonResponse(request, { ok: false, error: "AI javobini JSON formatiga o‘tkazib bo‘lmadi. Yana urinib ko‘ring.", code: "AI_PARSE_ERROR" }, 502);
+    if (error instanceof SyntaxError) {
+      return jsonResponse(request, { ok: false, error: "AI chizma javobini JSON formatida bera olmadi. Yana urinib ko‘ring.", code: "AI_PARSE_ERROR" }, 502);
     }
-    return jsonResponse(request, { ok: false, error: "Bekiuz AI bilan bog‘lanib bo‘lmadi. Server holatini tekshiring.", code: "AI_CONNECTION_ERROR" }, 502);
+    return jsonResponse(request, { ok: false, error: "Netlify AI Gateway so‘rovida xatolik bo‘ldi. Netlify Functions logini tekshiring.", code: "AI_PROVIDER_ERROR" }, 502);
   }
 };
 
@@ -266,6 +256,6 @@ export const config = {
     action: "rate_limit",
     aggregateBy: "ip",
     windowSize: 60,
-    windowLimit: 8
+    windowLimit: 5
   }
 };
