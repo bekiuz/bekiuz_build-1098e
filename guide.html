@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#091018" />
+  <meta name="description" content="BEKIUZ BUILD qanday ishlashi: uy rejasini yaratish, 3D ko‘rinish va materiallar hisobi." />
+  <title>Qanday ishlaydi? — BEKIUZ BUILD</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./site.css" />
+  <script defer src="./site.js"></script>
+  <style>
+    .guide-hero{padding:86px 0 57px;max-width:790px}.guide-hero h1{font-size:clamp(43px,6vw,68px);margin:20px 0}.guide-hero p{max-width:700px;color:#a4b3c4;font-size:14px;line-height:2}.guide-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding-bottom:65px}.guide-card{padding:24px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(145deg,#122033,#0d1723)}.guide-step{color:var(--cyan);font:600 12px "Space Grotesk";letter-spacing:.14em}.guide-card h2{margin:17px 0 9px;font:600 20px "Space Grotesk";letter-spacing:-.04em}.guide-card p{color:#9bacc0;font-size:12px;line-height:1.9}.guide-symbol{display:grid;place-items:center;width:44px;height:44px;margin-top:24px;border:1px solid rgba(123,215,239,.2);border-radius:12px;color:var(--cyan);background:rgba(123,215,239,.07);font-size:23px}.guide-detail{display:grid;grid-template-columns:.8fr 1.2fr;gap:42px;padding:45px 0 75px;border-top:1px solid rgba(145,168,195,.14)}.guide-detail h2{font-size:34px;line-height:1.2}.guide-detail p,.guide-detail li{color:#a4b3c4;font-size:12px;line-height:2}.guide-detail ul{padding-left:18px}.guide-faq{padding:35px 0 70px;border-top:1px solid rgba(145,168,195,.14)}.guide-faq h2{font-size:34px}.guide-faq details{border-bottom:1px solid rgba(145,168,195,.14);padding:17px 0}.guide-faq summary{cursor:pointer;list-style:none;font-size:13px;font-weight:700}.guide-faq summary::-webkit-details-marker{display:none}.guide-faq summary:after{content:"+";float:right;color:var(--cyan);font-size:17px}.guide-faq details[open] summary:after{content:"−"}.guide-faq details p{max-width:820px;margin:12px 0 0;color:#9eafc0;font-size:12px;line-height:1.9}
+    @media(max-width:760px){.guide-hero{padding-top:55px}.guide-cards{grid-template-columns:1fr;padding-bottom:42px}.guide-card{min-height:0}.guide-detail{grid-template-columns:1fr;gap:8px}.guide-detail h2,.guide-faq h2{font-size:29px}}
+  </style>
+</head>
+<body class="home-page guide-page">
+  <div class="boot-splash" id="bootIntro" aria-label="BEKIUZ BUILD ochilmoqda"><div class="boot-orbit orbit-one"></div><div class="boot-orbit orbit-two"></div><div class="boot-content"><div class="boot-mark">B<span>+</span></div><p class="boot-brand">BEKIUZ <b>BUILD</b></p><span class="boot-caption">UY LOYIHASI · YANGI BOSQICH</span><div class="boot-progress"><i></i></div><span class="boot-loading">Loyiha muhiti tayyorlanmoqda</span></div></div>
+  <div class="site-app">
+    <header class="site-header" id="siteHeader">
+      <a class="site-brand" href="./index.html"><span class="brand-mark">B<span>+</span></span><span class="brand-copy">BEKIUZ <b>BUILD</b><small>AI HOME PLANNER</small></span></a>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Menyuni ochish"><span></span><span></span></button>
+      <nav class="site-nav" id="mainNav" aria-label="Asosiy navigatsiya"><a href="./index.html">Bosh sahifa</a><a href="./planner.html">Loyiha yaratish</a><a class="nav-current" href="./guide.html" aria-current="page">Qanday ishlaydi?</a></nav>
+      <a class="header-cta" href="./planner.html">Boshlash <span>↗</span></a>
+    </header>
+    <main>
+      <section class="section-shell guide-hero reveal">
+        <span class="eyebrow"><span class="eyebrow-dot"></span> QADAMMA-QADAM QO‘LLANMA</span>
+        <h1>G‘oyani <em>rejaga aylantiring.</em></h1>
+        <p>BEKIUZ BUILD uy loyihasining boshlang‘ich ko‘rinishini tuzishga yordam beradi. Uy o‘lchamlarini kiriting, xona rejasini oling, interaktiv 3D modelni ko‘ring va asosiy materiallar miqdorini tekshiring.</p>
+        <a class="button-primary" href="./planner.html">Reja tuzishni boshlash <span>↗</span></a>
+      </section>
+      <section class="section-shell guide-cards">
+        <article class="guide-card reveal"><span class="guide-step">01 / KIRITING</span><h2>Talabni oddiy yozing</h2><p>Masalan: “7 metr eni, 5 metr bo‘yi, 3 xona, ikki nishabli tom”. Parametrlarni maydonlardan ham o‘zgartirish mumkin.</p><div class="guide-symbol">⌘</div></article>
+        <article class="guide-card reveal"><span class="guide-step">02 / TASAVVUR QILING</span><h2>2D va 3D ni ko‘ring</h2><p>AI xona joylashuvini tavsiya qiladi. SVG qavat chizmasi va 3D ko‘rinishda devorlar, bo‘linmalar, eshiklar, derazalar va tomni ko‘rishingiz mumkin.</p><div class="guide-symbol">◇</div></article>
+        <article class="guide-card reveal"><span class="guide-step">03 / HISOBLANG</span><h2>Materiallarni tekshiring</h2><p>O‘lchamlarga asoslangan avtomatik hisob beton hajmi, g‘isht va tom qoplamasi miqdorini dastlabki baholash uchun beradi.</p><div class="guide-symbol">▦</div></article>
+      </section>
+      <section class="section-shell guide-detail">
+        <div class="reveal"><span class="eyebrow"><span class="eyebrow-dot"></span> MUHIM ESLATMA</span><h2>Konsept — yakuniy ishchi chizma emas.</h2></div>
+        <div class="reveal"><p>AI yaratgan xona rejasi va 3D uy ko‘rinishi dastlabki rejalashtirish vositasidir. Ularning asosida darhol qurilishni boshlash kerak emas.</p><ul><li>Beton va g‘isht miqdori o‘lchamlar hamda ko‘rsatilgan farazlardan kelib chiqadi.</li><li>Armatura, poydevor, grunt, ustun-to‘sin, yuk ko‘tarish va yong‘in xavfsizligini malakali mutaxassis tekshirishi zarur.</li><li>Materiallar miqdori eshik, deraza, chiqindi va mahalliy standartlar tufayli o‘zgarishi mumkin.</li></ul></div>
+      </section>
+      <section class="section-shell guide-faq reveal"><h2>Ko‘p so‘raladigan savollar</h2>
+        <details><summary>3D model haqiqiy uy qurilish chizmasimi?</summary><p>Yo‘q. 3D model xona rejasini yaxshiroq tasavvur qilish uchun. Qurilishdan oldin arxitektura va konstruktiv ishchi chizmalar kerak.</p></details>
+        <details><summary>Material miqdorlari aniqmi?</summary><p>Bu dastlabki taxmin. Hisobda ishlatilgan o‘lchamlar va farazlar sahifada ko‘rsatiladi. Mahalliy material o‘lchami, chiqindi va loyiha yechimi yakuniy miqdorni o‘zgartiradi.</p></details>
+        <details><summary>Uy o‘lchamini keyin o‘zgartira olamanmi?</summary><p>Ha. Loyiha sahifasidagi parametrlar maydonini o‘zgartirib, rejani va ko‘rinishni qayta yaratishingiz mumkin.</p></details>
+      </section>
+    </main>
+    <footer class="site-footer"><a class="site-brand" href="./index.html"><span class="brand-mark">B<span>+</span></span><span class="brand-copy">BEKIUZ <b>BUILD</b><small>AI HOME PLANNER</small></span></a><p>Avval rejalang. Keyin mutaxassis bilan tekshiring.</p><nav><a href="./planner.html">Loyiha yaratish</a><a href="./index.html">Bosh sahifa</a></nav><span>© 2026 BEKIUZ BUILD</span></footer>
+  </div>
+</body>
+</html>
