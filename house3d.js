@@ -303,6 +303,8 @@ function buildHouse(viewer, project, rooms) {
   viewer.width = width;
   viewer.length = length;
   viewer.height = wallHeight;
+  viewer.cutaway = false;
+  viewer.showRoof = true;
   viewer.target.set(0, slabHeight + wallHeight * 0.55, 0);
   viewer.radius = Math.max(width, length) * 2.2;
 
@@ -385,11 +387,12 @@ function buildHouse(viewer, project, rooms) {
       const z1 = -length / 2 + start * length;
       const z2 = -length / 2 + end * length;
       const segmentLength = z2 - z1;
-      const openings = segmentLength > 1.35 ? [{ center: (z1 + z2) / 2, width: Math.min(0.86, segmentLength * 0.38), bottom: 0, height: partitionDoorH, type: "door" }] : [];
+      const openings = segmentLength > 1.35 ? [{ center: 0, width: Math.min(0.86, segmentLength * 0.38), bottom: 0, height: partitionDoorH, type: "door" }] : [];
       addWallWithOpenings(viewer.interiorRoot, "z", x, segmentLength, Math.max(0.1, wallThickness * 0.72), wallHeight, floorY, partitionMat, openings, frameMat, glassMat);
       // addWallWithOpenings uses local coordinates, so align each room divider to its true center.
-      const last = viewer.interiorRoot.children[viewer.interiorRoot.children.length - 1];
-      if (last) last.position.z += (z1 + z2) / 2;
+      for (let i = beforeCount; i < viewer.interiorRoot.children.length; i += 1) {
+        viewer.interiorRoot.children[i].position.z += (z1 + z2) / 2;
+      }
     }
   }
   for (const [positionText, intervals] of horizontal) {
@@ -398,7 +401,7 @@ function buildHouse(viewer, project, rooms) {
       const x1 = -width / 2 + start * width;
       const x2 = -width / 2 + end * width;
       const segmentLength = x2 - x1;
-      const openings = segmentLength > 1.35 ? [{ center: (x1 + x2) / 2, width: Math.min(0.86, segmentLength * 0.38), bottom: 0, height: partitionDoorH, type: "door" }] : [];
+      const openings = segmentLength > 1.35 ? [{ center: 0, width: Math.min(0.86, segmentLength * 0.38), bottom: 0, height: partitionDoorH, type: "door" }] : [];
       const beforeCount = viewer.interiorRoot.children.length;
       addWallWithOpenings(viewer.interiorRoot, "x", z, segmentLength, Math.max(0.1, wallThickness * 0.72), wallHeight, floorY, partitionMat, openings, frameMat, glassMat);
       // Wall helper starts at -segmentLength/2; shift new divider pieces to segment center.
