@@ -6,6 +6,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const output = path.join(root, "dist");
 const publicFiles = [
   "index.html",
+  "planner.html",
+  "guide.html",
+  "site.css",
+  "site.js",
   "styles.css",
   "app.js",
   "house3d.js",
