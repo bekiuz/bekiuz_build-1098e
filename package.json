@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "BEKIUZ BUILD — home planning, conceptual 3D preview and demo cost estimates",
+  "description": "BEKIUZ BUILD — AI-assisted home planning and material estimates",
   "scripts": {
     "build": "node scripts/build.mjs",
     "android:add": "cap add android",
@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@capacitor/android": "^8.5.3",
-    "@capacitor/core": "^8.5.3"
+    "@capacitor/core": "^8.5.3",
+    "openai": "^5.12.2"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.5.3",
