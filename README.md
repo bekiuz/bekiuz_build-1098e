@@ -1,43 +1,35 @@
 # BEKIUZ BUILD
 
-**BEKIUZ BUILD** — O‘zbek tilida oddiy talabdan uy qavat rejasini va dastlabki qurilish materiali hisobini tayyorlashga mo‘ljallangan AI yordamchi.
+**BEKIUZ BUILD** — foydalanuvchi o‘zbek tilida yozgan uy talabidan konseptual qavat rejasini va qurilish materiallari miqdorini tayyorlaydigan AI yordamchi.
 
-## Hozirgi MVP
+## MVP imkoniyatlari
 
-- O‘zbek tilida uy talabini oddiy matn bilan yozish: masalan, “7 metr eni, 5 metr bo‘yi, beton plita 30 sm, 3 xona, shifer tom”.
-- Matndan uy eni, bo‘yi, beton qalinligi va xona sonini shakllarga avtomatik ko‘chirish.
-- Bekiuz AI orqali xona nomlari va joylashuvining konseptual rejasini yaratish.
-- SVG qavat chizmasini ko‘rsatish va yuklab olish.
-- Plita betonining hajmi (m³), taxminiy massasi (tonna), g‘isht miqdori va tom qoplamasini hisoblash.
-- Hisobotni chop etish yoki brauzer orqali PDF sifatida saqlash.
-- Moslashuvchan, mobilga mos Uzbek-language web UI; 3D demo-model olib tashlangan.
+- “7 metr eni, 5 metr bo‘yi, beton plita 30 sm, 3 xona va shifer tom” kabi oddiy matndan o‘lchamlarni aniqlash.
+- Netlify server funksiyasi orqali mavjud Bekiuz AI xizmatiga ulanib, xona nomlari va joylashuvini tavsiya qilish.
+- AI xona rejasini SVG chizma shaklida ko‘rsatish va yuklab olish.
+- Beton plita hajmini (m³) va taxminiy massasini (tonna) hisoblash.
+- Devor hajmi, g‘isht soni, tom yuzasi va shifer/profnastil listlari miqdorini taxmin qilish.
+- Hisobotni chop etish yoki PDF sifatida saqlash.
+- Moslashuvchan, o‘zbek tilidagi mobilga mos interfeys; 3D demo model olib tashlangan.
 
-## Hisoblash farazlari
+## AI qanday ulanadi?
 
-Hisoblar hozircha miqdoriy taxmin. Beton uchun 2.4 tonna/m³ zichlik; devor g‘ishti uchun taxminan 394 dona/m³ va 5% zaxira; tom uchun tanlangan qiyalik, 30 sm karniz, 10% zaxira, bir listga qabul qilingan foydali qoplash maydoni qo‘llanadi. Devor hisobida eshik/deraza o‘lchamlari taxminiy standart sifatida olinadi. Bu ko‘rsatkichlarni foydalanuvchi yoki mahalliy quruvchi tasdiqlashi kerak.
+Brauzer `/.netlify/functions/ai-plan` funksiyasiga so‘rov yuboradi. Netlify funksiyasi server tomonidan mavjud Bekiuz AI Worker’ning `/api/chat` endpointiga murojaat qiladi. **AI kaliti brauzerga joylanmaydi va Netlify’da alohida Gemini kaliti shart emas.** AI serveridagi bepul limit tugashi yoki server vaqtincha ishlamasligi mumkin; shu holatda foydalanuvchiga xatolik ko‘rsatiladi.
 
-Beton plitaning qalinligi foydalanuvchi kiritgan qiymat bo‘yicha arifmetik hisoblanadi, ammo 30 sm plita har bir uy uchun to‘g‘ri degani emas. Fundament, armatura, ustun/to‘sin, tom tayanchlari, grunt va barcha xavfsizlikka oid konstruktiv yechimlarni tegishli mutaxassis belgilashi va tekshirishi shart. AI chizmasi konseptualdir; tasdiqlangan ishchi arxitektura yoki konstruktiv loyiha emas.
+## Material hisobining farazlari
 
-## AI ulanishi
+Beton zichligi uchun 2.4 t/m³, devor g‘ishti uchun taxminan 394 dona/m³ va 5% zaxira, tom qoplamasi uchun taxminiy qiyalik, 30 sm karniz, 10% zaxira hamda bir listning foydali qoplash maydoni olinadi. Eshik va deraza o‘lchamlari standart taxmin. Natijalar dastlabki miqdoriy bahodir; mahalliy material o‘lchamlari va quruvchi hisoblari bilan solishtirish kerak.
 
-Frontend quyidagi Bekiuz AI Worker endpointiga ulanadi:
+Beton plita qalinligini foydalanuvchi kiritgan qiymat bo‘yicha matematik hisoblaymiz, ammo 30 sm plita har qanday uy uchun to‘g‘ri degani emas. Grunt, poydevor, armatura, ustun/to‘sin, tom konstruksiyasi va boshqa xavfsizlikka oid yechimlarni malakali muhandis belgilashi kerak. Chizma konseptual, tasdiqlangan ishchi loyiha emas.
 
-`https://bekiuz-ai.bekiuz282.workers.dev/api/plan`
+## Sayt va repozitoriylar
 
-Ulanish holati `/api/health` orqali tekshiriladi. Worker manba kodiga xona joylashuvini qaytaruvchi reja formati qo‘shilgan.
-
-**Muhim deploy eslatmasi:** GitHub Actions deploy run’ida “Deploy Worker” qadami SKIPPED holatida tugagan. Cloudflare Worker’ning yangi kodini jonli muhitga chiqarish uchun repo Actions secrets quyidagilar bilan sozlangan bo‘lishi kerak:
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-
-Ularni GitHub’dagi [Bekiuz AI repository Actions secrets](https://github.com/bekiuz/bekiuz-ai/settings/secrets/actions) bo‘limida sozlang va [Deploy Bekiuz AI Worker workflow](https://github.com/bekiuz/bekiuz-ai/actions/workflows/deploy-worker.yml) ishga tushiring. Tokenni kodga kiritmang va chatga yubormang. Deploydan keyin `/api/health` ni va `/api/plan` ni jonli so‘rov bilan tekshiring.
-
-## Repo va sayt
-
-- Repo: https://github.com/bekiuz/BEKIUZ_BUILD
-- Website: https://bekiuz.github.io/BEKIUZ_BUILD/
-- Build/validation Actions: https://github.com/bekiuz/BEKIUZ_BUILD/actions
+- Netlify sayti: https://delightful-stroopwafel-31f3ff.netlify.app/
+- Netlify boshqaruvi: https://app.netlify.com/projects/delightful-stroopwafel-31f3ff
+- Asosiy repo: https://github.com/bekiuz/BEKIUZ_BUILD
+- Netlify’dan import qilingan repo: https://github.com/bekiuz/bekiuz_build-1098e
+- AI xizmati: https://github.com/bekiuz/bekiuz-ai
 
 ## Build
 
-`node scripts/build.mjs` statik sayt fayllarini `dist/` ichiga nusxalaydi.
+`node scripts/build.mjs` statik sayt fayllarini `dist/` ichiga nusxalaydi. Netlify Functions `netlify/functions/` papkasida qoladi va alohida server tomonida ishga tushadi.
