@@ -8,6 +8,7 @@ const publicFiles = [
   "index.html",
   "styles.css",
   "app.js",
+  "house3d.js",
   "manifest.webmanifest",
   "favicon.svg",
   "sw.js"
