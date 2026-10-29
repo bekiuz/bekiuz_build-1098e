@@ -25,6 +25,60 @@
   let lastProject = null;
   let lastPlan = null;
   let promptParseTimer = null;
+  let house3dModulePromise = null;
+  let house3dViewer = null;
+
+  function sync3DControls() {
+    const ready = Boolean(house3dViewer);
+    $("#house3dCutawayBtn").disabled = !ready;
+    $("#house3dRoofBtn").disabled = !ready;
+    $("#house3dResetBtn").disabled = !ready;
+    if (ready) {
+      $("#house3dCutawayBtn").textContent = house3dViewer.cutaway ? "To‘liq uy" : "Ichki ko‘rinish";
+      $("#house3dRoofBtn").textContent = house3dViewer.showRoof ? "Tomni yashirish" : "Tomni ko‘rsatish";
+    }
+  }
+
+  async function updateHouse3D(project, rooms) {
+    const stage = $("#house3dCanvas");
+    const status = $("#house3dStatus");
+    status.textContent = "3D model tayyorlanmoqda…";
+    stage.dataset.error = "false";
+    if (!house3dViewer) {
+      stage.replaceChildren();
+      const placeholder = document.createElement("div");
+      placeholder.className = "house3d-placeholder";
+      const loader = document.createElement("span");
+      loader.className = "loader";
+      const note = document.createElement("p");
+      note.textContent = "AI xona rejasidan 3D uy modeli qurilmoqda…";
+      placeholder.append(loader, note);
+      stage.append(placeholder);
+    }
+    sync3DControls();
+    try {
+      if (!house3dModulePromise) house3dModulePromise = import("./house3d.js");
+      const module = await house3dModulePromise;
+      house3dViewer = module.renderHouse3D(stage, project, rooms);
+      stage.dataset.error = "false";
+      status.textContent = "3D model tayyor";
+      sync3DControls();
+    } catch (error) {
+      house3dModulePromise = null;
+      house3dViewer = null;
+      stage.dataset.error = "true";
+      stage.replaceChildren();
+      const placeholder = document.createElement("div");
+      placeholder.className = "house3d-placeholder";
+      const note = document.createElement("p");
+      note.textContent = "3D modul yuklanmadi. Internet aloqasini tekshiring. SVG 2D chizma va material hisoblari ishlashda davom etadi.";
+      placeholder.append(note);
+      stage.append(placeholder);
+      status.textContent = "3D yuklanmadi";
+      sync3DControls();
+      console.error("BEKIUZ BUILD 3D preview failed:", error);
+    }
+  }
 
   function setConnection(online, label) {
     const dot = $("#connectionDot");
@@ -396,6 +450,7 @@
     $("#emptyState").hidden = true;
     $("#loadingState").hidden = true;
     $("#resultState").hidden = false;
+    void updateHouse3D(project, rooms);
     setBadge("TAYYOR", "success");
     setConnection(true, "AI server javob berdi");
     $("#natija").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -453,7 +508,7 @@
       setConnection(false, "AI so‘rovi bajarilmadi");
     } finally {
       button.disabled = false;
-      label.textContent = "AI bilan chizma va hisob chiqarish";
+      label.textContent = "AI chizma, 3D va hisob chiqarish";
     }
   }
 
@@ -486,6 +541,19 @@
   $("#useExample").addEventListener("click", useExample);
   $("#editInputsBtn").addEventListener("click", () => $("#loyiha").scrollIntoView({ behavior: "smooth", block: "start" }));
   $("#downloadSvgBtn").addEventListener("click", downloadSvg);
+  $("#house3dCutawayBtn").addEventListener("click", () => {
+    if (!house3dViewer) return;
+    house3dViewer.toggleCutaway();
+    sync3DControls();
+  });
+  $("#house3dRoofBtn").addEventListener("click", () => {
+    if (!house3dViewer) return;
+    house3dViewer.toggleRoof();
+    sync3DControls();
+  });
+  $("#house3dResetBtn").addEventListener("click", () => {
+    if (house3dViewer) house3dViewer.resetView();
+  });
   $("#printBtn").addEventListener("click", () => window.print());
   $("#aiPrompt").addEventListener("input", () => {
     window.clearTimeout(promptParseTimer);
