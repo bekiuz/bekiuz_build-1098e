@@ -4,165 +4,75 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#091018" />
-  <meta name="description" content="BEKIUZ BUILD — AI yordamida uy rejasini chizish va qurilish materiallarini taxminiy hisoblash." />
-  <title>BEKIUZ BUILD — AI uy loyihachisi</title>
+  <meta name="description" content="BEKIUZ BUILD — AI yordamida uy rejasini chizing, 3D modelini ko‘ring va materiallarni taxminiy hisoblang." />
+  <title>BEKIUZ BUILD — Aqlli uy loyihalash</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="styles.css" />
-  <script defer src="app.js"></script>
+  <link rel="stylesheet" href="./site.css" />
+  <script defer src="./site.js"></script>
 </head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="#top" aria-label="BEKIUZ BUILD bosh sahifa">
-      <span class="brand-mark" aria-hidden="true">B<span>+</span></span>
-      <span class="brand-text">BEKIUZ <b>BUILD</b><small>AI HOME PLANNER</small></span>
-    </a>
-    <nav class="top-nav" aria-label="Asosiy navigatsiya">
-      <a href="#loyiha">Loyiha yaratish</a>
-      <a href="#natija">Chizma va materiallar</a>
-    </nav>
-    <span class="connection"><i id="connectionDot"></i><span id="connectionText">AI tekshirilmoqda</span></span>
-  </header>
-
-  <main id="top" class="page-shell">
-    <section class="intro">
-      <div class="intro-copy">
-        <div class="eyebrow"><span class="spark">✦</span> SUN’IY INTELLEKT YORDAMIDA UY LOYIHASI</div>
-        <h1>Uyingizni <em>tasvirlab bering.</em><br />Reja va hisobni oling.</h1>
-        <p class="intro-text">Oddiy tilda yozing: uyning eni, bo‘yi, beton qalinligi va xonalar. AI xonalar rejasini chizadi, BEKIUZ BUILD esa o‘lchamlar asosida beton, g‘isht va tom qoplamasini hisoblaydi.</p>
-        <div class="trust-line"><span class="check">✓</span> SVG qavat rejasi va AI xona joylashuviga asoslangan interaktiv 3D uy modeli</div>
-      </div>
-      <aside class="quick-example">
-        <span class="example-label">MISOL</span>
-        <p>“7 metr eni, 5 metr bo‘yi. Beton plita 30 sm. 3 xona, shifer tom.”</p>
-        <button type="button" id="useExample" class="text-button">Misolni kiritish <span>↗</span></button>
-      </aside>
-    </section>
-
-    <section class="workspace" id="loyiha">
-      <div class="panel input-panel">
-        <div class="panel-heading">
-          <div class="step-number">01</div>
-          <div><span class="overline">SIZNING TALABINGIZ</span><h2>Uy haqida ayting</h2></div>
+<body class="home-page">
+  <div class="boot-splash" id="bootIntro" aria-label="BEKIUZ BUILD ochilmoqda">
+    <div class="boot-orbit orbit-one"></div><div class="boot-orbit orbit-two"></div>
+    <div class="boot-content"><div class="boot-mark">B<span>+</span></div><p class="boot-brand">BEKIUZ <b>BUILD</b></p><span class="boot-caption">UY LOYIHASI · YANGI BOSQICH</span><div class="boot-progress"><i></i></div><span class="boot-loading">Loyiha muhiti tayyorlanmoqda</span></div>
+  </div>
+  <div class="site-app">
+    <header class="site-header" id="siteHeader">
+      <a class="site-brand" href="./index.html" aria-label="BEKIUZ BUILD bosh sahifa"><span class="brand-mark">B<span>+</span></span><span class="brand-copy">BEKIUZ <b>BUILD</b><small>AI HOME PLANNER</small></span></a>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Menyuni ochish"><span></span><span></span></button>
+      <nav class="site-nav" id="mainNav" aria-label="Asosiy navigatsiya"><a class="nav-current" href="./index.html" aria-current="page">Bosh sahifa</a><a href="./planner.html">Loyiha yaratish</a><a href="./guide.html">Qanday ishlaydi?</a></nav>
+      <a class="header-cta" href="./planner.html">Boshlash <span>↗</span></a>
+    </header>
+    <main>
+      <section class="hero section-shell">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> UY QURISHNI AQLLI BOSHLANG</div>
+          <h1>G‘oyangizdan<br /><em>uy loyihasigacha.</em></h1>
+          <p class="hero-description">Uy o‘lchamlarini oddiy tilda yozing. BEKIUZ BUILD xona rejasini tuzishga, 3D ko‘rinishni tasavvur qilishga va qurilish materiallarini taxminiy hisoblashga yordam beradi.</p>
+          <div class="hero-actions"><a class="button-primary" href="./planner.html">Loyihamni yaratish <span>↗</span></a><a class="button-quiet" href="./guide.html"><span class="play-icon">▶</span> Qanday ishlaydi?</a></div>
+          <div class="hero-trust"><span class="avatar-stack"><i>B</i><i>+</i><i>3D</i></span><span><b>Bir joyda</b><small>2D reja · 3D model · material hisobi</small></span></div>
         </div>
-        <form id="aiForm">
-          <label for="aiPrompt" class="field-label">AI bilan suhbat</label>
-          <textarea id="aiPrompt" maxlength="1200" rows="5" required spellcheck="false">7 metr eni, 5 metr bo‘yi uy qurmoqchiman. Beton plita qalinligi 30 sm. 3 xona va shifer tom kerak.</textarea>
-          <div class="prompt-tip"><span>✦</span> O‘zbek tilida odatdagidek yozing. O‘lchamlar avtomatik aniqlanadi.</div>
-
-          <div class="advanced-head"><span>Hisob uchun parametrlar</span><small>AI matndan aniqlaydi, kerak bo‘lsa o‘zgartiring</small></div>
-          <div class="parameter-grid">
-            <label>Uy eni (m)<input id="houseWidth" type="number" min="3" max="30" step="0.1" value="7" required /></label>
-            <label>Uy bo‘yi (m)<input id="houseLength" type="number" min="3" max="40" step="0.1" value="5" required /></label>
-            <label>Beton plita (sm)<input id="slabThickness" type="number" min="8" max="60" step="1" value="30" required /></label>
-            <label>Devor balandligi (m)<input id="wallHeight" type="number" min="2" max="5" step="0.1" value="2.8" required /></label>
-            <label>Devor qalinligi (sm)<input id="wallThickness" type="number" min="10" max="60" step="1" value="25" required /></label>
-            <label>Xonalar soni<input id="roomCount" type="number" min="2" max="8" step="1" value="3" required /></label>
-            <label>Eshiklar soni<input id="doorCount" type="number" min="1" max="8" step="1" value="1" required /></label>
-            <label>Derazalar soni<input id="windowCount" type="number" min="0" max="20" step="1" value="4" required /></label>
-            <label class="full-field">Tom shakli
-              <select id="roofType">
-                <option value="gable" selected>Ikki nishabli tom</option>
-                <option value="hip">To‘rt nishabli tom</option>
-                <option value="flat">Yassi tom</option>
-              </select>
-            </label>
-            <label class="full-field">Tom qoplamasi
-              <select id="roofCover">
-                <option value="shifer" selected>Shifer</option>
-                <option value="profnastil">Profnastil</option>
-              </select>
-            </label>
+        <div class="hero-visual" aria-label="Uy loyihasining konseptual 3D tasviri">
+          <div class="visual-glow"></div><div class="visual-topline"><span><i></i> LOYIHA KO‘RINISHI</span><span class="visual-live">LIVE CONCEPT</span></div>
+          <div class="house-stage">
+            <svg class="hero-house" viewBox="0 0 620 440" role="img" aria-label="Uy modeli, derazalari va tomi tasviri">
+              <defs><linearGradient id="wallA" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f2e8d8"/><stop offset="1" stop-color="#b2c0c5"/></linearGradient><linearGradient id="wallB" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8296a6"/><stop offset="1" stop-color="#465d70"/></linearGradient><linearGradient id="roofA" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9dc2ce"/><stop offset="1" stop-color="#45667c"/></linearGradient><linearGradient id="windowA" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#86dcf0"/><stop offset="1" stop-color="#31566a"/></linearGradient><filter id="softShadow"><feGaussianBlur stdDeviation="12"/></filter></defs>
+              <ellipse cx="326" cy="366" rx="206" ry="31" fill="#02070d" opacity=".55" filter="url(#softShadow)"/>
+              <g class="house-floating">
+                <polygon points="125,185 300,83 491,184 316,286" fill="url(#roofA)" stroke="#c7e2e9" stroke-opacity=".75" stroke-width="2"/><polygon points="125,185 316,286 316,322 125,221" fill="#293e4e" stroke="#7aa0b2" stroke-width="1.5"/><polygon points="316,286 491,184 491,222 316,322" fill="#1e3345" stroke="#7394a6" stroke-width="1.5"/>
+                <polygon points="158,211 316,294 316,375 158,292" fill="url(#wallA)" stroke="#e1e8e6" stroke-width="1.5"/><polygon points="316,294 458,211 458,292 316,375" fill="url(#wallB)" stroke="#a6bac7" stroke-width="1.5"/>
+                <polygon points="178,203 236,172 289,201 232,232" fill="#152a3a" stroke="#b9d7df" stroke-width="2"/><polygon points="190,203 236,180 276,202 231,224" fill="url(#windowA)"/><path d="M233 181L231 225M190 203L276 202" stroke="#c8e6ee" stroke-width="2"/>
+                <polygon points="341,169 398,199 451,169 395,139" fill="#203a4d" stroke="#b7d5df" stroke-width="2"/><polygon points="352,170 398,194 439,170 395,146" fill="url(#windowA)"/><path d="M396 146L398 194M352 170L439 170" stroke="#cae7ed" stroke-width="2"/>
+                <polygon points="179,273 222,296 222,337 179,314" fill="#617783" stroke="#d8e3e3" stroke-width="2"/><polygon points="190,281 213,293 213,326 190,314" fill="#243847"/><circle cx="208" cy="306" r="2" fill="#ffcb83"/><polygon points="247,309 289,331 289,359 247,337" fill="#263b49" stroke="#d4e0de" stroke-width="2"/>
+                <polygon points="325,308 359,288 359,330 325,350" fill="url(#windowA)" stroke="#d6e6e9" stroke-width="2"/><polygon points="377,278 418,254 418,296 377,320" fill="url(#windowA)" stroke="#d6e6e9" stroke-width="2"/><path d="M325 329L359 309M377 299L418 275M158 292L316 375L458 292" fill="none" stroke="#e9efee" stroke-opacity=".8" stroke-width="2"/>
+              </g>
+              <g class="floating-label label-one"><rect x="31" y="83" width="122" height="44" rx="9" fill="#102332" stroke="#426176"/><circle cx="48" cy="105" r="4" fill="#7bd7ef"/><text x="60" y="101" fill="#e8f4f8" font-size="10" font-family="DM Sans">3D MODEL</text><text x="60" y="116" fill="#90aaba" font-size="8" font-family="DM Sans">Interaktiv ko‘rinish</text></g>
+              <g class="floating-label label-two"><rect x="430" y="300" width="153" height="48" rx="9" fill="#102332" stroke="#426176"/><path d="M446 322l5 5 9-11" fill="none" stroke="#86e0ba" stroke-width="2"/><text x="468" y="319" fill="#e8f4f8" font-size="10" font-family="DM Sans">REJA TAYYOR</text><text x="468" y="333" fill="#90aaba" font-size="8" font-family="DM Sans">O‘lchamga mos</text></g>
+            </svg>
           </div>
-
-          <button type="submit" class="primary-button" id="generateBtn">
-            <span class="button-spark">✦</span><span id="generateLabel">AI bilan chizma va hisob chiqarish</span><span class="button-arrow">↗</span>
-          </button>
-          <p class="privacy-note"><span>◇</span> API kalitlari brauzerga yozilmaydi. AI server orqali ishlaydi.</p>
-        </form>
-      </div>
-
-      <div class="panel status-panel" id="natija">
-        <div class="panel-heading">
-          <div class="step-number muted-step">02</div>
-          <div><span class="overline">AI LOYIHACHI</span><h2>Chizma va hisob</h2></div>
-          <span class="ai-badge" id="aiBadge">KUTILMOQDA</span>
+          <div class="visual-bottomline"><span><b>01</b> / KONCEPT</span><span class="visual-dimensions">2D + 3D <i>·</i> HISOB</span></div>
+          <div class="floating-metric metric-top"><span class="metric-icon">⌂</span><span><b>O‘lchamlar</b><small>AI talqini</small></span><strong>7 × 5 m</strong></div><div class="floating-metric metric-bottom"><span class="metric-icon gold-icon">▦</span><span><b>Materiallar</b><small>Avtomatik hisob</small></span><strong>m³ · dona</strong></div>
         </div>
-        <div id="emptyState" class="empty-state">
-          <div class="empty-icon" aria-hidden="true">
-            <svg viewBox="0 0 96 96" fill="none"><rect x="15" y="13" width="66" height="70" rx="8" stroke="currentColor" stroke-width="2"/><path d="M25 28H70M25 36H49M25 47H48V70H25V47ZM55 47H70V57H55V47ZM55 63H70V70H55V63Z" stroke="currentColor" stroke-width="2"/><path d="M64 19L70 25M64 25L70 19" stroke="#ffbf70" stroke-width="2" stroke-linecap="round"/></svg>
-          </div>
-          <h3>Uy talabi kiritilgan</h3>
-          <p>“AI bilan chizma va hisob chiqarish” tugmasini bosing. Xonalar chizmasi, beton hajmi va tonnasi, g‘isht hamda shifer taxmini shu yerda chiqadi.</p>
-          <div class="empty-steps"><span>01 · AI xona rejasini tuzadi</span><span>02 · O‘lchamlar hisoblanadi</span><span>03 · Materiallar jamlanadi</span></div>
+      </section>
+      <section class="trust-strip section-shell reveal"><span>LOYIHA JARAYONI</span><b>01 — Tasvirlang</b><i></i><b>02 — Rejani ko‘ring</b><i></i><b>03 — Hisobni oling</b></section>
+      <section class="features-section section-shell">
+        <div class="section-heading reveal"><div><span class="eyebrow"><span class="eyebrow-dot"></span> IMKONIYATLAR</span><h2>Uy g‘oyasini <em>aniqroq ko‘ring.</em></h2></div><p>Rejalashtirishdan dastlabki material hisobigacha kerakli vositalar bitta platformada.</p></div>
+        <div class="feature-grid">
+          <article class="feature-card feature-blue reveal"><div class="feature-icon">⌘</div><span class="feature-number">01 / PLAN</span><h3>AI xona rejasi</h3><p>Oddiy tilda yozilgan talabdan xonalar joylashuvining konseptual rejasini oling.</p><a href="./planner.html">Reja yaratish <span>↗</span></a><div class="mini-blueprint"><i></i><i></i><i></i><i></i><i></i></div></article>
+          <article class="feature-card feature-gold reveal"><div class="feature-icon">◇</div><span class="feature-number">02 / 3D</span><h3>Interaktiv 3D uy</h3><p>Modelni aylantiring, tomni yashiring va xonalar ichki joylashuvini ko‘ring.</p><a href="./planner.html#natija">3D ni ko‘rish <span>↗</span></a><div class="mini-house"><span></span><i></i><b></b></div></article>
+          <article class="feature-card feature-green reveal"><div class="feature-icon">▦</div><span class="feature-number">03 / HISOB</span><h3>Materiallar hisobi</h3><p>Beton, g‘isht va tom qoplamasi miqdorini ko‘rsatilgan farazlar bilan hisoblang.</p><a href="./planner.html#natija">Hisobni boshlash <span>↗</span></a><div class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
         </div>
-        <div id="loadingState" class="loading-state" hidden>
-          <span class="loader"></span><strong>AI uyingiz rejasini tuzyapti…</strong><span>Talablar tahlil qilinmoqda, chizma va materiallar hisoblanmoqda.</span>
-        </div>
-        <div id="errorState" class="error-state" role="alert" hidden></div>
-        <div id="resultState" hidden>
-          <div class="result-summary">
-            <div><span class="overline">LOYIHA TAVSIFI</span><p id="planSummary"></p></div>
-            <button type="button" class="secondary-button" id="editInputsBtn">Parametrlarni o‘zgartirish</button>
-          </div>
-          <div class="metrics-grid">
-            <article class="metric-card"><span>Uy maydoni</span><strong id="areaValue">—</strong><small>m² · bir qavat izi</small></article>
-            <article class="metric-card highlight-cyan"><span>Beton plita</span><strong id="concreteValue">—</strong><small id="concreteMass">—</small></article>
-            <article class="metric-card highlight-gold"><span>G‘isht</span><strong id="brickValue">—</strong><small>taxminiy dona</small></article>
-            <article class="metric-card"><span>Tom qoplamasi</span><strong id="roofValue">—</strong><small id="roofAreaValue">—</small></article>
-          </div>
-          <section class="house3d-panel" aria-labelledby="house3dTitle">
-            <div class="house3d-heading">
-              <div><span class="overline">AI 3D MODELI</span><h3 id="house3dTitle">Uyning 3D ko‘rinishi</h3><p>Xonalar rejasidan uy hajmi, devorlar, eshik-derazalar va tom avtomatik quriladi.</p></div>
-              <span id="house3dStatus" class="house3d-status" aria-live="polite">3D model kutilyapti</span>
-            </div>
-            <div class="house3d-toolbar">
-              <button type="button" class="secondary-button" id="house3dCutawayBtn" disabled>Ichki ko‘rinish</button>
-              <button type="button" class="secondary-button" id="house3dRoofBtn" disabled>Tomni yashirish</button>
-              <button type="button" class="secondary-button" id="house3dResetBtn" disabled>Ko‘rinishni tiklash</button>
-            </div>
-            <div id="house3dCanvas" class="house3d-canvas" aria-label="Interaktiv 3D uy modeli">
-              <div class="house3d-placeholder"><span class="loader"></span><p>AI loyiha tayyorlanganda 3D uy modeli shu yerda paydo bo‘ladi.</p></div>
-            </div>
-            <p class="house3d-caption">Sichqoncha yoki barmoq bilan aylantiring, yaqinlashtirish uchun g‘ildirak yoki ikki barmoq harakatidan foydalaning. “Ichki ko‘rinish” tom va old devorni yashirib, xonalarni ko‘rsatadi.</p>
-          </section>
-          <div class="drawing-panel">
-            <div class="drawing-heading">
-              <div><span class="overline">AI CHIZMASI</span><h3>Qavat rejasi</h3><p id="planDimensions">—</p></div>
-              <div class="drawing-actions"><button type="button" class="secondary-button" id="downloadSvgBtn">SVG chizmani olish ↓</button><button type="button" class="secondary-button" id="printBtn">Hisobot / PDF ↗</button></div>
-            </div>
-            <div class="svg-wrap"><svg id="planSvg" viewBox="0 0 720 520" role="img" aria-label="AI taklif qilgan uyning qavat rejasi"></svg></div>
-            <p class="drawing-caption">Chizma konseptual reja bo‘lib, tasdiqlangan ishchi arxitektura chizmasi hisoblanmaydi.</p>
-          </div>
-          <div class="details-grid">
-            <section class="detail-card">
-              <div class="detail-card-heading"><span class="detail-icon cyan-icon">▦</span><div><span class="overline">MATERIAL HISOBI</span><h3>Asosiy materiallar</h3></div></div>
-              <div class="material-table-wrap"><table class="material-table"><thead><tr><th>Material</th><th>Hisob</th><th>Miqdor</th></tr></thead><tbody id="materialsBody"></tbody></table></div>
-            </section>
-            <section class="detail-card">
-              <div class="detail-card-heading"><span class="detail-icon gold-icon">✦</span><div><span class="overline">AI TAVSIYALARI</span><h3>Loyiha izohlari</h3></div></div>
-              <ul id="recommendations" class="recommendations"></ul>
-            </section>
-          </div>
-          <section class="assumptions">
-            <strong>Hisobda qabul qilingan farazlar</strong>
-            <p id="assumptionsText"></p>
-            <p class="safety-note">Bu taxminiy miqdoriy hisob. 30 sm beton plita barcha uylar uchun mos degani emas. Poydevor turi, armatura, beton markasi, grunt, tom tayanchlari va konstruksiya xavfsizligini mahalliy muhandis belgilashi shart. Fundament, ustun va to‘sin betoni ushbu plita hisobiga kiritilmagan.</p>
-          </section>
-        </div>
-      </div>
-    </section>
-
-    <section class="workflow-note">
-      <div class="workflow-mark">i</div>
-      <div><strong>Bu qanday ishlaydi?</strong><p>AI xona rejasini va tavsiyalarni beradi; shu reja asosida interaktiv 3D model quriladi. Beton, g‘isht va tom qoplamasi ekrandagi o‘lchamlardan avtomatik hisoblanadi. 2D va 3D ko‘rinishlar konseptual bo‘lib, qurilish oldidan mutaxassis tekshiruvi kerak.</p></div>
-    </section>
-  </main>
-
-  <footer class="footer"><a class="brand footer-brand" href="#top"><span class="brand-mark">B<span>+</span></span><span class="brand-text">BEKIUZ <b>BUILD</b><small>AI HOME PLANNER</small></span></a><p>Avval rejalang. Keyin mutaxassis bilan tekshiring.</p><span>© 2026 BEKIUZ BUILD</span></footer>
-  <script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));</script>
+      </section>
+      <section class="process-section"><div class="section-shell process-layout">
+        <div class="process-copy reveal"><span class="eyebrow"><span class="eyebrow-dot"></span> ODDIY JARAYON</span><h2>Uch qadamda<br /><em>boshlang‘ich loyiha.</em></h2><p>Murakkab chizmalar bilan boshlash shart emas. Avval o‘lcham va istaklaringizni yozing, so‘ng natijani ko‘rib, qiymatlarni o‘zgartiring.</p><a class="button-primary" href="./planner.html">Hozir boshlash <span>↗</span></a></div>
+        <div class="process-steps"><article class="process-step reveal"><span>01</span><div><h3>Uy talabini yozing</h3><p>Eni, bo‘yi, xona soni, tom turi va boshqa istaklarni kiriting.</p></div><i>↗</i></article><article class="process-step reveal"><span>02</span><div><h3>AI rejasini ko‘ring</h3><p>AI xona joylashuvini taklif qiladi, sayt 2D chizma va 3D ko‘rinishni yaratadi.</p></div><i>↗</i></article><article class="process-step reveal"><span>03</span><div><h3>Materiallarni tekshiring</h3><p>Taxminiy miqdorlarni ko‘rib chiqing va kerak bo‘lsa parametrlarni o‘zgartiring.</p></div><i>↗</i></article></div>
+      </div></section>
+      <section class="cta-section section-shell reveal"><div class="cta-glow"></div><span class="eyebrow"><span class="eyebrow-dot"></span> BEKIUZ BUILD</span><h2>Keyingi uyingizni<br /><em>tasavvur qilishdan boshlang.</em></h2><p>Birinchi konsept uchun o‘lchamlaringiz kifoya.</p><a class="button-primary" href="./planner.html">Loyiha yaratish <span>↗</span></a><div class="cta-orb">B<span>+</span></div></section>
+    </main>
+    <footer class="site-footer"><a class="site-brand" href="./index.html"><span class="brand-mark">B<span>+</span></span><span class="brand-copy">BEKIUZ <b>BUILD</b><small>AI HOME PLANNER</small></span></a><p>Avval rejalang. Keyin mutaxassis bilan tekshiring.</p><nav><a href="./planner.html">Loyiha yaratish</a><a href="./guide.html">Qanday ishlaydi?</a></nav><span>© 2026 BEKIUZ BUILD</span></footer>
+  </div>
 </body>
 </html>
