@@ -27,6 +27,7 @@
   let promptParseTimer = null;
   let house3dModulePromise = null;
   let house3dViewer = null;
+  let house3dRequestId = 0;
 
   function sync3DControls() {
     const ready = Boolean(house3dViewer);
@@ -39,10 +40,11 @@
     }
   }
 
-  async function updateHouse3D(project, rooms) {
+  async function updateHouse3D(project, rooms, fromAI = true) {
+    const requestId = ++house3dRequestId;
     const stage = $("#house3dCanvas");
     const status = $("#house3dStatus");
-    status.textContent = "3D model tayyorlanmoqda…";
+    status.textContent = fromAI ? "AI 3D modeli tayyorlanmoqda…" : "3D namuna tayyorlanmoqda…";
     stage.dataset.error = "false";
     if (!house3dViewer) {
       stage.replaceChildren();
@@ -59,11 +61,13 @@
     try {
       if (!house3dModulePromise) house3dModulePromise = import("./house3d.js");
       const module = await house3dModulePromise;
+      if (requestId !== house3dRequestId) return;
       house3dViewer = module.renderHouse3D(stage, project, rooms);
       stage.dataset.error = "false";
-      status.textContent = "3D model tayyor";
+      status.textContent = fromAI ? "AI rejasiga mos 3D model tayyor" : "3D namuna tayyor · AI rejasini kutmoqda";
       sync3DControls();
     } catch (error) {
+      if (requestId !== house3dRequestId) return;
       house3dModulePromise = null;
       house3dViewer = null;
       stage.dataset.error = "true";
@@ -408,7 +412,7 @@
     });
   }
 
-  function renderResult(plan, project) {
+  function renderResult(plan, project, options = {}) {
     const quantities = calculateMaterials(project);
     const rooms = validRooms(plan.rooms, project.rooms);
     lastProject = project;
@@ -450,17 +454,17 @@
     $("#emptyState").hidden = true;
     $("#loadingState").hidden = true;
     $("#resultState").hidden = false;
-    void updateHouse3D(project, rooms);
-    setBadge("TAYYOR", "success");
-    setConnection(true, "AI server javob berdi");
-    $("#natija").scrollIntoView({ behavior: "smooth", block: "start" });
+    void updateHouse3D(project, rooms, options.fromAI !== false);
+    const fromAI = options.fromAI !== false;
+    setBadge(fromAI ? "TAYYOR" : "3D NAMUNA", fromAI ? "success" : "");
+    if (fromAI) setConnection(true, "AI server javob berdi");
+    if (options.scroll !== false) $("#natija").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   async function generatePlan(event) {
     event.preventDefault();
     $("#errorState").hidden = true;
     $("#emptyState").hidden = true;
-    $("#resultState").hidden = true;
     $("#loadingState").hidden = false;
     setBadge("REJALASHTIRMOQDA");
     const button = $("#generateBtn");
@@ -503,8 +507,7 @@
       $("#errorState").hidden = false;
       $("#errorState").textContent = error.message || "AI bilan bog‘lanib bo‘lmadi. Keyinroq urinib ko‘ring.";
       $("#emptyState").hidden = true;
-      $("#resultState").hidden = true;
-      setBadge("XATOLIK", "error");
+      setBadge("AI XATOSI · 3D NAMUNA SAQLANDI", "error");
       setConnection(false, "AI so‘rovi bajarilmadi");
     } finally {
       button.disabled = false;
@@ -528,6 +531,19 @@
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
+  }
+
+  function renderDraftPreview() {
+    const project = readProject();
+    renderResult({
+      summary: "Bu dastlabki 3D namuna. AI tugmasini bosgach, xona joylashuvi AI tayyorlagan rejaga moslanadi.",
+      recommendations: [
+        "Hozirgi xona joylashuvi — o‘lchamlardan yaratilgan namuna; AI hali tasdiqlamagan.",
+        "AI reja tayyorlagach, devor bo‘linmalari 3D modelda yangilanadi.",
+        "Qurilishdan oldin reja va konstruksiyani mutaxassis tekshirishi kerak."
+      ],
+      rooms: getFallbackRooms(project.rooms)
+    }, project, { fromAI: false, scroll: false });
   }
 
   function useExample() {
@@ -557,8 +573,19 @@
   $("#printBtn").addEventListener("click", () => window.print());
   $("#aiPrompt").addEventListener("input", () => {
     window.clearTimeout(promptParseTimer);
-    promptParseTimer = window.setTimeout(parsePromptToFields, 240);
+    promptParseTimer = window.setTimeout(() => {
+      parsePromptToFields();
+      renderDraftPreview();
+    }, 240);
   });
-  $("#aiPrompt").addEventListener("blur", parsePromptToFields);
+  $("#aiPrompt").addEventListener("blur", () => {
+    parsePromptToFields();
+    renderDraftPreview();
+  });
+  ["houseWidth", "houseLength", "slabThickness", "wallHeight", "wallThickness", "roomCount", "doorCount", "windowCount", "roofType", "roofCover"].forEach((id) => {
+    $("#" + id).addEventListener("change", renderDraftPreview);
+  });
+  parsePromptToFields();
+  renderDraftPreview();
   checkHealth();
 })();
