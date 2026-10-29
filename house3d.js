@@ -99,7 +99,8 @@ function createViewer(container) {
   const viewer = {
     container, scene, camera, renderer, environment, houseRoot, roofRoot, frontRoot, interiorRoot, otherWallsRoot,
     model: null, width: 7, length: 5, height: 2.8, radius: 17, theta: 0.72, phi: 0.92,
-    target: new THREE.Vector3(0, 1.5, 0), cutaway: false, showRoof: true, pointer: null
+    target: new THREE.Vector3(0, 1.5, 0), cutaway: false, showRoof: true, pointer: null,
+    pointers: new Map(), previousPinchDistance: 0
   };
 
   function updateCamera() {
@@ -129,24 +130,45 @@ function createViewer(container) {
 
   renderer.domElement.addEventListener("pointerdown", (event) => {
     if (event.button !== 0 && event.pointerType === "mouse") return;
-    viewer.pointer = { x: event.clientX, y: event.clientY, id: event.pointerId };
+    viewer.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY, id: event.pointerId });
+    if (viewer.pointers.size === 1) viewer.pointer = viewer.pointers.get(event.pointerId);
+    if (viewer.pointers.size === 2) {
+      const points = Array.from(viewer.pointers.values());
+      viewer.previousPinchDistance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+      viewer.pointer = null;
+    }
     renderer.domElement.setPointerCapture?.(event.pointerId);
   });
   renderer.domElement.addEventListener("pointermove", (event) => {
-    if (!viewer.pointer || viewer.pointer.id !== event.pointerId) return;
-    const dx = event.clientX - viewer.pointer.x;
-    const dy = event.clientY - viewer.pointer.y;
-    viewer.pointer.x = event.clientX;
-    viewer.pointer.y = event.clientY;
-    viewer.theta -= dx * 0.008;
-    viewer.phi = clamp(viewer.phi + dy * 0.006, 0.18, 1.45);
+    const point = viewer.pointers.get(event.pointerId);
+    if (!point) return;
+    const dx = event.clientX - point.x;
+    const dy = event.clientY - point.y;
+    point.x = event.clientX;
+    point.y = event.clientY;
+    if (viewer.pointers.size >= 2) {
+      const points = Array.from(viewer.pointers.values());
+      const distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+      if (viewer.previousPinchDistance > 0) {
+        viewer.radius = clamp(viewer.radius + (viewer.previousPinchDistance - distance) * 0.045,
+          Math.max(viewer.width, viewer.length) * 0.9, Math.max(viewer.width, viewer.length) * 4.5);
+      }
+      viewer.previousPinchDistance = distance;
+    } else if (viewer.pointer && viewer.pointer.id === event.pointerId) {
+      viewer.theta -= dx * 0.008;
+      viewer.phi = clamp(viewer.phi + dy * 0.006, 0.18, 1.45);
+    }
     updateCamera();
   });
-  const endDrag = () => { viewer.pointer = null; };
+  const endDrag = (event) => {
+    viewer.pointers.delete(event.pointerId);
+    viewer.previousPinchDistance = 0;
+    viewer.pointer = viewer.pointers.size === 1 ? Array.from(viewer.pointers.values())[0] : null;
+  };
   renderer.domElement.addEventListener("pointerup", endDrag);
   renderer.domElement.addEventListener("pointercancel", endDrag);
   renderer.domElement.addEventListener("pointerleave", (event) => {
-    if (event.buttons === 0) endDrag();
+    if (event.buttons === 0 && viewer.pointers.has(event.pointerId)) endDrag(event);
   });
   renderer.domElement.addEventListener("wheel", (event) => {
     event.preventDefault();
