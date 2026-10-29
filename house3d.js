@@ -388,6 +388,7 @@ function buildHouse(viewer, project, rooms) {
       const z2 = -length / 2 + end * length;
       const segmentLength = z2 - z1;
       const openings = segmentLength > 1.35 ? [{ center: 0, width: Math.min(0.86, segmentLength * 0.38), bottom: 0, height: partitionDoorH, type: "door" }] : [];
+      const beforeCount = viewer.interiorRoot.children.length;
       addWallWithOpenings(viewer.interiorRoot, "z", x, segmentLength, Math.max(0.1, wallThickness * 0.72), wallHeight, floorY, partitionMat, openings, frameMat, glassMat);
       // addWallWithOpenings uses local coordinates, so align each room divider to its true center.
       for (let i = beforeCount; i < viewer.interiorRoot.children.length; i += 1) {
