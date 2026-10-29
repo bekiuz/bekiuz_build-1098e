@@ -33,7 +33,7 @@
         <div class="eyebrow"><span class="spark">✦</span> SUN’IY INTELLEKT YORDAMIDA UY LOYIHASI</div>
         <h1>Uyingizni <em>tasvirlab bering.</em><br />Reja va hisobni oling.</h1>
         <p class="intro-text">Oddiy tilda yozing: uyning eni, bo‘yi, beton qalinligi va xonalar. AI xonalar rejasini chizadi, BEKIUZ BUILD esa o‘lchamlar asosida beton, g‘isht va tom qoplamasini hisoblaydi.</p>
-        <div class="trust-line"><span class="check">✓</span> 3D model yo‘q — asosiy e’tibor chizma va materiallarda</div>
+        <div class="trust-line"><span class="check">✓</span> SVG qavat rejasi va AI xona joylashuviga asoslangan interaktiv 3D uy modeli</div>
       </div>
       <aside class="quick-example">
         <span class="example-label">MISOL</span>
@@ -122,6 +122,21 @@
             <div class="svg-wrap"><svg id="planSvg" viewBox="0 0 720 520" role="img" aria-label="AI taklif qilgan uyning qavat rejasi"></svg></div>
             <p class="drawing-caption">Chizma konseptual reja bo‘lib, tasdiqlangan ishchi arxitektura chizmasi hisoblanmaydi.</p>
           </div>
+          <section class="house3d-panel" aria-labelledby="house3dTitle">
+            <div class="house3d-heading">
+              <div><span class="overline">AI 3D MODELI</span><h3 id="house3dTitle">Uyning 3D ko‘rinishi</h3><p>Xonalar rejasidan uy hajmi, devorlar, eshik-derazalar va tom avtomatik quriladi.</p></div>
+              <span id="house3dStatus" class="house3d-status" aria-live="polite">3D model kutilyapti</span>
+            </div>
+            <div class="house3d-toolbar">
+              <button type="button" class="secondary-button" id="house3dCutawayBtn" disabled>Ichki ko‘rinish</button>
+              <button type="button" class="secondary-button" id="house3dRoofBtn" disabled>Tomni yashirish</button>
+              <button type="button" class="secondary-button" id="house3dResetBtn" disabled>Ko‘rinishni tiklash</button>
+            </div>
+            <div id="house3dCanvas" class="house3d-canvas" aria-label="Interaktiv 3D uy modeli">
+              <div class="house3d-placeholder"><span class="loader"></span><p>AI loyiha tayyorlanganda 3D uy modeli shu yerda paydo bo‘ladi.</p></div>
+            </div>
+            <p class="house3d-caption">Sichqoncha yoki barmoq bilan aylantiring, yaqinlashtirish uchun g‘ildirak yoki ikki barmoq harakatidan foydalaning. “Ichki ko‘rinish” tom va old devorni yashirib, xonalarni ko‘rsatadi.</p>
+          </section>
           <div class="details-grid">
             <section class="detail-card">
               <div class="detail-card-heading"><span class="detail-icon cyan-icon">▦</span><div><span class="overline">MATERIAL HISOBI</span><h3>Asosiy materiallar</h3></div></div>
@@ -143,7 +158,7 @@
 
     <section class="workflow-note">
       <div class="workflow-mark">i</div>
-      <div><strong>Bu qanday ishlaydi?</strong><p>AI xonalar rejasini va tavsiyalarni tayyorlaydi. Beton, g‘isht va tom qoplamasi sonlari model taxmini emas — ekranda ko‘rsatilgan o‘lchamlar, teshiklar va material standartlariga asoslangan avtomatik hisob.</p></div>
+      <div><strong>Bu qanday ishlaydi?</strong><p>AI xona rejasini va tavsiyalarni beradi; shu reja asosida interaktiv 3D model quriladi. Beton, g‘isht va tom qoplamasi ekrandagi o‘lchamlardan avtomatik hisoblanadi. 2D va 3D ko‘rinishlar konseptual bo‘lib, qurilish oldidan mutaxassis tekshiruvi kerak.</p></div>
     </section>
   </main>
 
