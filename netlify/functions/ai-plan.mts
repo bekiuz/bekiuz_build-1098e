@@ -9,6 +9,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://bekiuz.github.io",
   "https://bekiuz-build.netlify.app",
   "https://delightful-stroopwafel-31f3ff.netlify.app",
+  "https://bekiuz-ai-build.netlify.app",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
   "http://localhost",
