@@ -1,7 +1,11 @@
-const CACHE_NAME = "bekiuz-build-shell-v4";
+const CACHE_NAME = "bekiuz-build-shell-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./planner.html",
+  "./guide.html",
+  "./site.css",
+  "./site.js",
   "./styles.css",
   "./app.js",
   "./house3d.js",
