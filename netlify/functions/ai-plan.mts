@@ -1,3 +1,4 @@
+import process from "process";
 import OpenAI from "openai";
 
 declare const Netlify: {
@@ -147,7 +148,7 @@ function parseJsonReply(reply: string): Record<string, unknown> {
   return parsed as Record<string, unknown>;
 }
 
-const getModel = () => Netlify.env.get("BEKIUZ_BUILD_AI_MODEL") || "gpt-5-mini";
+const getModel = () => process.env.BEKIUZ_BUILD_AI_MODEL || "gpt-5-mini";
 
 export default async (request: Request): Promise<Response> => {
   const origin = request.headers.get("origin");
@@ -157,7 +158,7 @@ export default async (request: Request): Promise<Response> => {
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(request) });
 
   if (request.method === "GET") {
-    const gatewayReady = Boolean(Netlify.env.get("OPENAI_BASE_URL") && Netlify.env.get("OPENAI_API_KEY"));
+    const gatewayReady = Boolean(process.env.OPENAI_BASE_URL && process.env.OPENAI_API_KEY);
     return jsonResponse(request, {
       ok: gatewayReady,
       configured: gatewayReady,
@@ -171,7 +172,7 @@ export default async (request: Request): Promise<Response> => {
     return jsonResponse(request, { ok: false, error: "Faqat POST so‘rovi qabul qilinadi.", code: "METHOD_NOT_ALLOWED" }, 405);
   }
 
-  if (!Netlify.env.get("OPENAI_BASE_URL") || !Netlify.env.get("OPENAI_API_KEY")) {
+  if (!process.env.OPENAI_BASE_URL || !process.env.OPENAI_API_KEY) {
     return jsonResponse(request, {
       ok: false,
       error: "Netlify AI Gateway aktiv emas. Netlify hisobida AI Features yoqilganini tekshiring.",
