@@ -1,7 +1,10 @@
 (() => {
   "use strict";
 
-  const API_BASE = "https://bekiuz-ai.bekiuz282.workers.dev/api";
+  const currentHost = window.location.hostname;
+  const isLocalDev = (currentHost === "localhost" || currentHost === "127.0.0.1") && window.location.protocol !== "capacitor:";
+  const API_BASE = currentHost.endsWith(".netlify.app") || isLocalDev ? "" : "https://delightful-stroopwafel-31f3ff.netlify.app";
+  const AI_ENDPOINT = API_BASE + "/.netlify/functions/ai-plan";
   const $ = (selector) => document.querySelector(selector);
   const NS = "http://www.w3.org/2000/svg";
   const number = (id, fallback) => {
@@ -50,7 +53,7 @@
 
   async function checkHealth() {
     try {
-      const response = await fetch(API_BASE + "/health", { headers: { Accept: "application/json" } });
+      const response = await fetch(AI_ENDPOINT, { headers: { Accept: "application/json" } });
       const data = await response.json();
       if (!response.ok || !data.ok || !data.configured) throw new Error("AI server hali tayyor emas.");
       setConnection(true, "AI server ulangan");
@@ -413,14 +416,14 @@
       const prompt = $("#aiPrompt").value.trim();
       const project = readProject();
       if (!prompt) throw new Error("Avval uy haqidagi talablaringizni yozing.");
-      const response = await fetch(API_BASE + "/plan", {
+      const response = await fetch(AI_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ prompt, project })
       });
       const type = response.headers.get("content-type") || "";
       if (!type.includes("application/json")) {
-        throw new Error("AI serverining yangi versiyasi hali chiqarilmagan. Bekiuz AI Worker’ni deploy qilish kerak.");
+        throw new Error("Netlify AI funksiyasi hali yangilanmagan. Netlify deploy tugagach sahifani yangilang.");
       }
       const data = await response.json();
       if (!response.ok || !data.ok) {
