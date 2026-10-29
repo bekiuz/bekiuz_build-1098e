@@ -422,10 +422,18 @@
         body: JSON.stringify({ prompt, project })
       });
       const type = response.headers.get("content-type") || "";
-      if (!type.includes("application/json")) {
-        throw new Error("Netlify AI funksiyasi hali yangilanmagan. Netlify deploy tugagach sahifani yangilang.");
+      let data;
+      if (type.includes("application/json")) {
+        data = await response.json();
+      } else {
+        const raw = await response.text();
+        try {
+          data = JSON.parse(raw);
+        } catch {
+          const message = raw.replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim();
+          throw new Error(message.slice(0, 240) || ("AI server JSON javob bermadi (HTTP " + response.status + ")."));
+        }
       }
-      const data = await response.json();
       if (!response.ok || !data.ok) {
         const error = new Error(data.error || "AI javob qaytarmadi.");
         error.code = data.code;
